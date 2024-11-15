@@ -5,10 +5,10 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# Configure upload folder
-UPLOAD_FOLDER = 'uploaded_images'
+# Configure upload folder inside container
+UPLOAD_FOLDER = '/app/uploaded_images'
 if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+    os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -39,21 +39,21 @@ def upload():
                 f.write(image_data)
             
             return jsonify({
-                'status': 'ok'
+                'status': 'ok',
+                'filename': filename
             }), 200
             
         except Exception as e:
             return jsonify({
                 'status': 'error',
-                'message': 'Invalid base64 string'
+                'message': str(e)
             }), 400
             
     except Exception as e:
         return jsonify({
             'status': 'error',
-            'message': 'Server error'
+            'message': str(e)
         }), 500
 
 if __name__ == '__main__':
-    # Changed this line to accept connections from any IP
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 8080)))
