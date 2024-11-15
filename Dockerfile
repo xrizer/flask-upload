@@ -1,23 +1,14 @@
-# Use Python 3.9 slim image as base
+# Dockerfile
 FROM python:3.9-slim
 
-# Set working directory in container
 WORKDIR /app
 
-# Copy requirements file
-COPY requirements.txt .
+# Create upload directory
+RUN mkdir -p /app/uploaded_images
 
-# Install dependencies
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the application code
-COPY app.py .
+COPY . .
 
-# Create upload directory
-RUN mkdir uploaded_images
-
-# Expose port 8080
-EXPOSE 8080
-
-# Run the application
-CMD ["python", "app.py"]
+CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 app:app
