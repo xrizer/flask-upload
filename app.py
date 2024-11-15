@@ -10,6 +10,7 @@ UPLOAD_FOLDER = '/app/uploaded_images'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
+    
 def decode_base64(base64_string):
     """
     Decode base64 string to binary data
@@ -56,7 +57,7 @@ def process_base64_image(base64_string):
     except Exception as e:
         raise Exception(f"Error processing image: {str(e)}")
 
-@app.route('/upload', methods=['POST'])
+@app.route('/uploads', methods=['POST'])
 def upload():
     try:
         # Get the JSON data
